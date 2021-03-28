@@ -31,6 +31,8 @@ wreckManagerMode = 3;
 minPlayerDistance = 50;
 saving = 0;
 
+#include "dialogs.hpp"
+
 class CfgSounds
 {
 	sounds[] = {};
@@ -63,6 +65,7 @@ class cfgFunctions {
 			class sthudPatch;
 			class unitTracker;
 			class fuelConsumption;
+			class curatorHUD;
 		};
 	};
 };
