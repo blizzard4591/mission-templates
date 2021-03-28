@@ -20,8 +20,8 @@ class RscTitles
 		enableDisplay = 1;
 		onLoad = "uiNamespace setVariable ['ZO_RscTeamHealthHUD', _this select 0];";
 		duration = INFINITE;
-		fadeIn = 1;
-		fadeOut = 1;
+		fadeIn = 0;
+		fadeOut = 0;
 		name = "RscTeamHealthHUD";
 		class Controls
 		{
