@@ -5,6 +5,7 @@ null=[]spawn {
 	if (!hasInterface) exitWith {};
 
 	private _doDebugOutput = true;
+	private _outputStyle = "monospaced"; // monospaced, numbers
 
 	private _id = ["CuratorHUDLayer"] call BIS_fnc_rscLayer;
 	while {true} do {
@@ -124,7 +125,16 @@ null=[]spawn {
 			private _finalText = _groupsOutputArray joinString ", ";
 			private _finalTextMono = _groupsOutputArrayMono joinString ", ";
 
-			_ctrlText ctrlSetStructuredText parseText _finalTextMono;
+			if (_outputStyle == "monospaced") then {
+				_ctrlText ctrlSetStructuredText parseText _finalTextMono;
+			} else {
+				if (_outputStyle == "numbers") then {
+					_ctrlText ctrlSetStructuredText parseText _groupsOutputArray;
+				} else {
+					systemChat format ["Invalid output style: %1", _outputStyle];
+					_ctrlText ctrlSetStructuredText parseText format ["Invalid output style: %1", _outputStyle];
+				};
+			};
 			_ctrlText ctrlSetBackgroundColor [0,0,0,0.5];
 
 			// Fix width/height
