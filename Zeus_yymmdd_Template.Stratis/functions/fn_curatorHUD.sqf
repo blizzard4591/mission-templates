@@ -3,12 +3,15 @@ null=[]spawn {
 	disableSerialization;
 
 	if (!hasInterface) exitWith {};
+
+	private _doDebugOutput = true;
+
+	private _id = ["CuratorHUDLayer"] call BIS_fnc_rscLayer;
 	while {true} do {
 		// Check if is Zeus/CuratorHUDLayer
 		if (!isNull (getAssignedCuratorLogic player)) then {
-			systemChat "Player is Zeus/Curator.";
+			if (_doDebugOutput) then { systemChat "Player is Zeus/Curator."; };
 
-			private _id = ["CuratorHUDLayer"] call BIS_fnc_rscLayer;
 			_id cutRsc ["RscTeamHealthHUD", "PLAIN"];
 
 			private _name = name player;
@@ -16,15 +19,15 @@ null=[]spawn {
 
 			waitUntil {!isNull (uiNameSpace getVariable "ZO_RscTeamHealthHUD")};
 			_display = uiNameSpace getVariable "ZO_RscTeamHealthHUD";
-			_ctrlText = _display displayCtrl 4591;
+			_ctrlText = _display displayCtrl 1741;
 
 			private _headlessClients = entities "HeadlessClient_F";
 			private _humanPlayers = allPlayers - _headlessClients;
-			systemChat format ["We currently have %1 human players and %2 HCs.", count _humanPlayers, count _headlessClients];
+			if (_doDebugOutput) then { systemChat format ["We currently have %1 human players and %2 HCs.", count _humanPlayers, count _headlessClients]; };
 
 			private _allGroupsWithPlayers = [];
 			{_allGroupsWithPlayers pushBackUnique group _x} forEach _humanPlayers;
-			systemChat format ["We currently have %1 groups with players.", count _allGroupsWithPlayers];
+			if (_doDebugOutput) then { systemChat format ["We currently have %1 groups with players.", count _allGroupsWithPlayers]; };
 
 			private _showLeader = true;
 
@@ -127,7 +130,7 @@ null=[]spawn {
 			
 			uiSleep 5;
 		} else {
-			systemChat "Player is NOT Zeus/Curator.";
+			if (_doDebugOutput) then { systemChat "Player is NOT Zeus/Curator."; };
 			uiSleep 15;
 		};
 	};

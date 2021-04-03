@@ -27,7 +27,7 @@ class RscTitles
 		{
 			class CenterText: RscStructuredText
 			{
-				idc = 4591;
+				idc = 1741;
 				text = "Team Health HUD";
 				x = GUI_GRID_TOPCENTER_X + (12 * GUI_GRID_TOPCENTER_W);
 				y = GUI_GRID_TOPCENTER_Y + (4 * GUI_GRID_TOPCENTER_H);
