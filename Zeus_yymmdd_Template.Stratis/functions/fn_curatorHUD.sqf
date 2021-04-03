@@ -32,6 +32,7 @@ null=[]spawn {
 			private _showLeader = true;
 
 			private _groupsOutputArray = [];
+			private _groupsOutputArrayMono = [];
 			{
 				private _group = _x;
 				private _groupName 				= groupId _group;
@@ -45,6 +46,7 @@ null=[]spawn {
 				private _playersDownedArray = [];
 				private _playersDeadArray = [];
 				private _playersOutputArray = [];
+				private _playersMonoOutput = [];
 				
 				{
 					private _player				= _x;
@@ -55,9 +57,11 @@ null=[]spawn {
 					private _isHealthy			= _lifeState == "HEALTHY";
 					if (_lifeState == "DEAD" || (!alive _player)) then {
 						_playersDeadArray pushBack _playerName;
+						_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#D40004'>_</t>";
 					} else {
 						if (!_isHealthy) then {
 							_playersDownedArray pushBack _playerName;
+							_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#D97E00'>-</t>";
 						} else {
 							// Sum up the hitStates
 							private _playerHitStates = getAllHitPointsDamage _player;
@@ -70,9 +74,13 @@ null=[]spawn {
 								_playersInjuredArray pushBack _playerName;
 								if (_playerHitSum >= 1.0) then {
 									_playersHeavilyInjuredArray pushBack _playerName;
+									_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#D97E00'>I</t>";
+								} else {
+									_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#F0F03A'>I</t>";
 								};
 							} else {
 								_playersHealthyArray pushBack _playerName;
+								_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#0A9B00'>H</t>";
 							};
 						};
 					};
@@ -109,11 +117,14 @@ null=[]spawn {
 				//private _deadString = if (_groupPlayersDeadCount > 0) then [ { format [" (Dead: %1)", _groupPlayersDeadCount] }, { "" } ];
 				private _groupText = format ["<t size='1.0' color='%1'>%2: %3H/%4I/%5U/%6D/%7T</t>", _color, _groupName, _groupPlayersHealthyCount, _groupPlayersInjuredCount, _groupPlayersDownedCount, _groupPlayersDeadCount, _groupPlayerCount];
 				_groupsOutputArray pushBack _groupText;
+				private _groupTextMono = format ["<t size='1.0' color='%1'>%2:</t> %3", _color, _groupName, _playersMonoOutput joinString ""];
+				_groupsOutputArrayMono pushBack _groupTextMono;
 			} forEach (_allGroupsWithPlayers);
 
 			private _finalText = _groupsOutputArray joinString ", ";
+			private _finalTextMono = _groupsOutputArrayMono joinString ", ";
 
-			_ctrlText ctrlSetStructuredText parseText _finalText;
+			_ctrlText ctrlSetStructuredText parseText _finalTextMono;
 			_ctrlText ctrlSetBackgroundColor [0,0,0,0.5];
 
 			// Fix width/height
