@@ -56,13 +56,14 @@ null=[]spawn {
 					private _leaderString		= if (_isLeader) then [ { " (L)" }, { "" } ];
 					private _lifeState 			= lifeState _player;
 					private _isHealthy			= _lifeState == "HEALTHY";
+					private _playerFont			= if (_isLeader) then [ { "EtelkaMonospaceProBold" }, { "EtelkaMonospacePro" } ];
 					if (_lifeState == "DEAD" || (!alive _player)) then {
 						_playersDeadArray pushBack _playerName;
-						_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#D40004'>_</t>";
+						_playersMonoOutput pushBack format ["<t size='1.0' font='%1' color='#D40004'>_</t>", _playerFont];
 					} else {
 						if (!_isHealthy) then {
 							_playersDownedArray pushBack _playerName;
-							_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#D97E00'>-</t>";
+							_playersMonoOutput pushBack format ["<t size='1.0' font='%1' color='#D97E00'>-</t>", _playerFont];
 						} else {
 							// Sum up the hitStates
 							private _playerHitStates = getAllHitPointsDamage _player;
@@ -75,13 +76,13 @@ null=[]spawn {
 								_playersInjuredArray pushBack _playerName;
 								if (_playerHitSum >= 1.0) then {
 									_playersHeavilyInjuredArray pushBack _playerName;
-									_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#D97E00'>I</t>";
+									_playersMonoOutput pushBack format ["<t size='1.0' font='%1' color='#D97E00'>I</t>", _playerFont];
 								} else {
-									_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#F0F03A'>I</t>";
+									_playersMonoOutput pushBack format ["<t size='1.0' font='%1' color='#F0F03A'>I</t>", _playerFont];
 								};
 							} else {
 								_playersHealthyArray pushBack _playerName;
-								_playersMonoOutput pushBack "<t size='1.0' font='EtelkaMonospacePro' color='#0A9B00'>H</t>";
+								_playersMonoOutput pushBack format ["<t size='1.0' font='%1' color='#0A9B00'>H</t>", _playerFont];
 							};
 						};
 					};
