@@ -1,3 +1,4 @@
+#include "\a3\ui_f\hpp\definecommongrids.inc"
 
 null=[]spawn {
 	disableSerialization;
@@ -5,34 +6,42 @@ null=[]spawn {
 	if (!hasInterface) exitWith {};
 
 	// Settings - Start
-	private _doDebugOutput = false;
-	private _outputStyle = "monospaced"; // Valid are: monospaced, numbers
-	private _newlineAfterXGroups = 3;
-	private _updateIntervalInSeconds = 5;
+	CURATORHUD_isEnabled = true;
+	CURATORHUD_doDebugOutput = false;
+	CURATORHUD_outputStyle = "monospaced"; // Valid are: monospaced, numbers
+	CURATORHUD_newlineAfterXGroups = 3;
+	CURATORHUD_updateIntervalInSeconds = 5;
+	CURATORHUD_position = "left"; // Valid are: left, center
 	// Settings - End
 
 	private _id = ["CuratorHUDLayer"] call BIS_fnc_rscLayer;
+	private _isCtrlTextCreated = false;
+	private _ctrlText = nil;
 	while {true} do {
 		// Check if is Zeus/CuratorHUDLayer
-		if (!isNull (getAssignedCuratorLogic player)) then {
-			if (_doDebugOutput) then { systemChat "Player is Zeus/Curator."; };
+		if ((!isNull (getAssignedCuratorLogic player)) && CURATORHUD_isEnabled) then {
+			if (CURATORHUD_doDebugOutput) then { systemChat "Player is Zeus/Curator."; };
 
 			_id cutRsc ["RscTeamHealthHUD", "PLAIN"];
+			_isCtrlTextCreated = true;
 
 			private _name = name player;
 			private _time = time;
 
 			waitUntil {!isNull (uiNameSpace getVariable "ZO_RscTeamHealthHUD")};
-			_display = uiNameSpace getVariable "ZO_RscTeamHealthHUD";
+			private _display = uiNameSpace getVariable "ZO_RscTeamHealthHUD";
 			_ctrlText = _display displayCtrl 1741;
 
 			private _headlessClients = entities "HeadlessClient_F";
 			private _humanPlayers = allPlayers - _headlessClients;
-			if (_doDebugOutput) then { systemChat format ["We currently have %1 human players and %2 HCs.", count _humanPlayers, count _headlessClients]; };
+			if (CURATORHUD_doDebugOutput) then { systemChat format ["We currently have %1 human players and %2 HCs.", count _humanPlayers, count _headlessClients]; };
 
 			private _allGroupsWithPlayers = [];
 			{_allGroupsWithPlayers pushBackUnique group _x} forEach _humanPlayers;
-			if (_doDebugOutput) then { systemChat format ["We currently have %1 groups with players.", count _allGroupsWithPlayers]; };
+			
+			// For debugging in SP/MP without players:
+			//_allGroupsWithPlayers = allGroups;
+			if (CURATORHUD_doDebugOutput) then { systemChat format ["We currently have %1 groups with players.", count _allGroupsWithPlayers]; };
 
 			private _showLeader = true;
 
@@ -123,7 +132,7 @@ null=[]spawn {
 
 				private _groupOutNewline = "";
 				// If this is the next extra after a _newlineAfterXGroups roll-over was reached, prepend a newline.
-				if ((_newlineAfterXGroups > 0) && (_groupCounter > 0) && ((_groupCounter mod _newlineAfterXGroups) == 0)) then {
+				if ((CURATORHUD_newlineAfterXGroups > 0) && (_groupCounter > 0) && ((_groupCounter mod CURATORHUD_newlineAfterXGroups) == 0)) then {
 					_groupOutNewline = "<br/>";
 				};
 
@@ -139,34 +148,52 @@ null=[]spawn {
 			private _finalText = _groupsOutputArray joinString ", ";
 			private _finalTextMono = _groupsOutputArrayMono joinString ", ";
 
-			if (_outputStyle == "monospaced") then {
+			if (CURATORHUD_outputStyle == "monospaced") then {
 				_ctrlText ctrlSetStructuredText parseText _finalTextMono;
 			} else {
-				if (_outputStyle == "numbers") then {
+				if (CURATORHUD_outputStyle == "numbers") then {
 					_ctrlText ctrlSetStructuredText parseText _groupsOutputArray;
 				} else {
-					systemChat format ["Invalid output style: %1", _outputStyle];
-					_ctrlText ctrlSetStructuredText parseText format ["Invalid output style: %1", _outputStyle];
+					systemChat format ["Invalid output style: %1", CURATORHUD_outputStyle];
+					_ctrlText ctrlSetStructuredText parseText format ["Invalid output style: %1", CURATORHUD_outputStyle];
 				};
 			};
 			_ctrlText ctrlSetBackgroundColor [0,0,0,0.5];
 
+			// Set position
+			if (CURATORHUD_position == "left") then {
+				_ctrlText ctrlSetPositionX (GUI_GRID_TOPCENTER_X + (0 * GUI_GRID_TOPCENTER_W));
+			} else {
+				if (CURATORHUD_position == "center") then {
+					_ctrlText ctrlSetPositionX (GUI_GRID_TOPCENTER_X + (12 * GUI_GRID_TOPCENTER_W));
+				} else {
+					systemChat format ["Invalid output position: %1", CURATORHUD_position];
+				};
+			};
+
 			// Fix width/height
 			private _width = ctrlTextWidth _ctrlText;
+			_ctrlText ctrlSetPositionW _width + 2 * 0.008; // This double set/commit is necessary to calculate the correct height using the new width...
+			_ctrlText ctrlCommit 0;
 			private _height = ctrlTextHeight _ctrlText;
-			private _oldPos = ctrlPosition _ctrlText;
-			private _oldX		= _oldPos select 0;
-			private _oldY		= _oldPos select 1;
-			private _oldWidth	= _oldPos select 2;
-			private _oldHeight	= _oldPos select 3;
-
-			_ctrlText ctrlSetPosition [_oldX,_oldY,_width,_height];
+			_ctrlText ctrlSetPositionH _height;
 			_ctrlText ctrlCommit 0;
 			
-			uiSleep _updateIntervalInSeconds;
+			uiSleep CURATORHUD_updateIntervalInSeconds;
 		} else {
-			if (_doDebugOutput) then { systemChat "Player is NOT Zeus/Curator."; };
-			uiSleep 15;
+			if (!CURATORHUD_isEnabled) then {
+				if (CURATORHUD_doDebugOutput) then { systemChat "HUD is disabled."; };
+				if (_isCtrlTextCreated) then {
+					_ctrlText ctrlSetBackgroundColor [0,0,0,0];
+					_ctrlText ctrlSetText "";
+					_ctrlText ctrlSetPositionW 0;
+					_ctrlText ctrlSetPositionH 0;
+				};
+				uiSleep 5;
+			} else {
+				uiSleep 15;
+				if (CURATORHUD_doDebugOutput) then { systemChat "Player is NOT Zeus/Curator."; };
+			};
 		};
 	};
 }
