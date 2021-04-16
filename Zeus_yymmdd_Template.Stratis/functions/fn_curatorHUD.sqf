@@ -6,6 +6,7 @@ null=[]spawn {
 
 	private _doDebugOutput = true;
 	private _outputStyle = "monospaced"; // monospaced, numbers
+	private _newlineAfterXGroups = 3;
 
 	private _id = ["CuratorHUDLayer"] call BIS_fnc_rscLayer;
 	while {true} do {
@@ -34,6 +35,7 @@ null=[]spawn {
 
 			private _groupsOutputArray = [];
 			private _groupsOutputArrayMono = [];
+			private _groupCounter = 0;
 			{
 				private _group = _x;
 				private _groupName 				= groupId _group;
@@ -116,11 +118,19 @@ null=[]spawn {
 					_color = "#D40004"; // Red
 				};
 
-				//private _deadString = if (_groupPlayersDeadCount > 0) then [ { format [" (Dead: %1)", _groupPlayersDeadCount] }, { "" } ];
-				private _groupText = format ["<t size='1.0' color='%1'>%2: %3H/%4I/%5U/%6D/%7T</t>", _color, _groupName, _groupPlayersHealthyCount, _groupPlayersInjuredCount, _groupPlayersDownedCount, _groupPlayersDeadCount, _groupPlayerCount];
+				private _groupOutNewline = "";
+				// If this is the next extra after a _newlineAfterXGroups roll-over was reached, prepend a newline.
+				if ((_newlineAfterXGroups > 0) && (_groupCounter > 0) && ((_groupCounter mod _newlineAfterXGroups) == 0)) then {
+					_groupOutNewline = "<br/>";
+				};
+
+				private _groupText = format ["%8<t size='1.0' color='%1'>%2: %3H/%4I/%5U/%6D/%7T</t>", _color, _groupName, _groupPlayersHealthyCount, _groupPlayersInjuredCount, _groupPlayersDownedCount, _groupPlayersDeadCount, _groupPlayerCount, _groupOutNewline];
 				_groupsOutputArray pushBack _groupText;
-				private _groupTextMono = format ["<t size='1.0' color='%1'>%2:</t> %3", _color, _groupName, _playersMonoOutput joinString ""];
+				private _groupTextMono = format ["%4<t size='1.0' color='%1'>%2:</t> %3", _color, _groupName, _playersMonoOutput joinString "", _groupOutNewline];
 				_groupsOutputArrayMono pushBack _groupTextMono;
+
+				// Increment group counter
+				_groupCounter = _groupCounter + 1;
 			} forEach (_allGroupsWithPlayers);
 
 			private _finalText = _groupsOutputArray joinString ", ";
