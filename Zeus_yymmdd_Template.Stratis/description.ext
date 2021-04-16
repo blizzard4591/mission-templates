@@ -31,7 +31,15 @@ wreckManagerMode = 3;
 minPlayerDistance = 50;
 saving = 0;
 
+// Curator HUD Dialog
 #include "dialogs.hpp"
+
+// Curator HUD CBA Settings
+class Extended_PreInit_EventHandlers {
+    class My_pre_init_event {
+        init = "call compile preprocessFileLineNumbers 'functions\fn_curatorHUD_XEH_preInit.sqf'";
+    };
+};
 
 class CfgSounds
 {

@@ -10,7 +10,7 @@ null=[]spawn {
 	CURATORHUD_doDebugOutput = false;
 	CURATORHUD_outputStyle = "monospaced"; // Valid are: monospaced, numbers
 	CURATORHUD_newlineAfterXGroups = 3;
-	CURATORHUD_updateIntervalInSeconds = 5;
+	CURATORHUD_updateIntervalInSeconds = 1;
 	CURATORHUD_position = "left"; // Valid are: left, center
 	// Settings - End
 
