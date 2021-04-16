@@ -4,9 +4,12 @@ null=[]spawn {
 
 	if (!hasInterface) exitWith {};
 
-	private _doDebugOutput = true;
-	private _outputStyle = "monospaced"; // monospaced, numbers
+	// Settings - Start
+	private _doDebugOutput = false;
+	private _outputStyle = "monospaced"; // Valid are: monospaced, numbers
 	private _newlineAfterXGroups = 3;
+	private _updateIntervalInSeconds = 5;
+	// Settings - End
 
 	private _id = ["CuratorHUDLayer"] call BIS_fnc_rscLayer;
 	while {true} do {
@@ -160,7 +163,7 @@ null=[]spawn {
 			_ctrlText ctrlSetPosition [_oldX,_oldY,_width,_height];
 			_ctrlText ctrlCommit 0;
 			
-			uiSleep 5;
+			uiSleep _updateIntervalInSeconds;
 		} else {
 			if (_doDebugOutput) then { systemChat "Player is NOT Zeus/Curator."; };
 			uiSleep 15;
