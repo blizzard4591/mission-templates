@@ -30,14 +30,14 @@ null=[]spawn {
 			_ctrlText = _display displayCtrl 1741;
 
 			private _headlessClients 	= entities "HeadlessClient_F";
-			private curatorPlayers 		= [];
+			private _curatorPlayers 	= [];
 			{
 				if (!isNull (getAssignedCuratorLogic _x)) then {
-					curatorPlayers pushBackUnique _x;
+					_curatorPlayers pushBackUnique _x;
 				};
 			} forEach allPlayers;
 
-			private _humanPlayers = (allPlayers - _headlessClients) - curatorPlayers;
+			private _humanPlayers = (allPlayers - _headlessClients) - _curatorPlayers;
 			if (CURATORHUD_doDebugOutput) then { systemChat format ["We currently have %1 human players and %2 HCs.", count _humanPlayers, count _headlessClients]; };
 
 			private _allGroupsWithPlayers = [];
