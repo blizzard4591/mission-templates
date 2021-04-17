@@ -9,7 +9,7 @@ null=[]spawn {
 	CURATORHUD_isEnabled = true;
 	CURATORHUD_doDebugOutput = false;
 	CURATORHUD_outputStyle = "monospaced"; // Valid are: monospaced, numbers
-	CURATORHUD_newlineAfterXGroups = 3;
+	CURATORHUD_newlineAfterXGroups = 4;
 	CURATORHUD_updateIntervalInSeconds = 1;
 	CURATORHUD_position = "left"; // Valid are: left, center
 	// Settings - End
@@ -150,14 +150,14 @@ null=[]spawn {
 				_groupCounter = _groupCounter + 1;
 			} forEach (_allGroupsWithPlayers);
 
-			private _finalText 		= _groupsOutputArray joinString ", ";
-			private _finalTextMono 	= _groupsOutputArrayMono joinString ", ";
+			private _finalTextNumbers	= _groupsOutputArray joinString ", ";
+			private _finalTextMono 		= _groupsOutputArrayMono joinString ", ";
 
 			if (CURATORHUD_outputStyle == "monospaced") then {
 				_ctrlText ctrlSetStructuredText parseText _finalTextMono;
 			} else {
 				if (CURATORHUD_outputStyle == "numbers") then {
-					_ctrlText ctrlSetStructuredText parseText _groupsOutputArray;
+					_ctrlText ctrlSetStructuredText parseText _finalTextNumbers;
 				} else {
 					systemChat format ["Invalid output style: %1", CURATORHUD_outputStyle];
 					_ctrlText ctrlSetStructuredText parseText format ["Invalid output style: %1", CURATORHUD_outputStyle];
