@@ -25,9 +25,6 @@ null=[]spawn {
 			_id cutRsc ["RscTeamHealthHUD", "PLAIN"];
 			_isCtrlTextCreated = true;
 
-			private _name = name player;
-			private _time = time;
-
 			waitUntil {!isNull (uiNameSpace getVariable "ZO_RscTeamHealthHUD")};
 			private _display = uiNameSpace getVariable "ZO_RscTeamHealthHUD";
 			_ctrlText = _display displayCtrl 1741;
@@ -45,31 +42,31 @@ null=[]spawn {
 
 			private _showLeader = true;
 
-			private _groupsOutputArray = [];
-			private _groupsOutputArrayMono = [];
-			private _groupCounter = 0;
+			private _groupsOutputArray 		= [];
+			private _groupsOutputArrayMono 	= [];
+			private _groupCounter 			= 0;
 			{
-				private _group = _x;
-				private _groupName 				= groupId _group;
-				private _groupLeader 		= leader _group;
-				private _groupLeaderName	= [_groupLeader] call BIS_fnc_getName;
-				private _groupPlayers 		= units _group;
-				private _groupPlayerCount	= count _groupPlayers;
-				private _playersHealthyArray = [];
-				private _playersInjuredArray = [];
+				private _group 						= _x;
+				private _groupName 					= groupId _group;
+				private _groupLeader 				= leader _group;
+				private _groupLeaderName			= [_groupLeader] call BIS_fnc_getName;
+				private _groupPlayers 				= units _group;
+				private _groupPlayerCount			= count _groupPlayers;
+				private _playersHealthyArray 		= [];
+				private _playersInjuredArray 		= [];
 				private _playersHeavilyInjuredArray = [];
-				private _playersDownedArray = [];
-				private _playersDeadArray = [];
-				private _playersOutputArray = [];
-				private _playersMonoOutput = [];
+				private _playersDownedArray 		= [];
+				private _playersDeadArray 			= [];
+				private _playersOutputArray	 		= [];
+				private _playersMonoOutput			= [];
 				
 				{
 					private _player				= _x;
 					private _playerName 		= [_player] call BIS_fnc_getName;
-					private _isLeader			= _player == _groupLeader;
+					private _isLeader			= (_player == _groupLeader);
 					private _leaderString		= if (_isLeader) then [ { " (L)" }, { "" } ];
 					private _lifeState 			= lifeState _player;
-					private _isHealthy			= _lifeState == "HEALTHY";
+					private _isHealthy			= (_lifeState == "HEALTHY");
 					private _playerFont			= if (_isLeader) then [ { "EtelkaMonospaceProBold" }, { "EtelkaMonospacePro" } ];
 					if (_lifeState == "DEAD" || (!alive _player)) then {
 						_playersDeadArray pushBack _playerName;
@@ -84,7 +81,7 @@ null=[]spawn {
 							private _playerHitValues = _playerHitStates select 2;
 							private _playerHitSum = 0.0;
 							{
-								_playerHitSum = _playerHitSum + _x
+								_playerHitSum = _playerHitSum + _x;
 							} forEach _playerHitValues;
 							if (_playerHitSum >= 0.4) then {
 								_playersInjuredArray pushBack _playerName;
@@ -101,15 +98,15 @@ null=[]spawn {
 						};
 					};
 
-					private _playersText		= format ["%1%2 (%3)", _playerName, _leaderString, _lifeState];
+					private _playersText = format ["%1%2 (%3)", _playerName, _leaderString, _lifeState];
 					_playersOutputArray pushBack _playersText;
 				} forEach _groupPlayers;
 				
-				private _groupPlayersHealthyCount = count _playersHealthyArray;
-				private _groupPlayersDownedCount = count _playersDownedArray;
-				private _groupPlayersInjuredCount = count _playersInjuredArray;
-				private _groupPlayersHeavilyInjuredCount = count _playersHeavilyInjuredArray;
-				private _groupPlayersDeadCount = count _playersDeadArray;
+				private _groupPlayersHealthyCount 			= count _playersHealthyArray;
+				private _groupPlayersDownedCount 			= count _playersDownedArray;
+				private _groupPlayersInjuredCount 			= count _playersInjuredArray;
+				private _groupPlayersHeavilyInjuredCount 	= count _playersHeavilyInjuredArray;
+				private _groupPlayersDeadCount 				= count _playersDeadArray;
 				private _color = "#000000";
 				if (_groupPlayersHealthyCount >= (0.75 * _groupPlayerCount)) then {
 					_color = "#0A9B00"; // Green
@@ -145,8 +142,8 @@ null=[]spawn {
 				_groupCounter = _groupCounter + 1;
 			} forEach (_allGroupsWithPlayers);
 
-			private _finalText = _groupsOutputArray joinString ", ";
-			private _finalTextMono = _groupsOutputArrayMono joinString ", ";
+			private _finalText 		= _groupsOutputArray joinString ", ";
+			private _finalTextMono 	= _groupsOutputArrayMono joinString ", ";
 
 			if (CURATORHUD_outputStyle == "monospaced") then {
 				_ctrlText ctrlSetStructuredText parseText _finalTextMono;
