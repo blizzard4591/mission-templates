@@ -29,8 +29,15 @@ null=[]spawn {
 			private _display = uiNameSpace getVariable "ZO_RscTeamHealthHUD";
 			_ctrlText = _display displayCtrl 1741;
 
-			private _headlessClients = entities "HeadlessClient_F";
-			private _humanPlayers = allPlayers - _headlessClients;
+			private _headlessClients 	= entities "HeadlessClient_F";
+			private curatorPlayers 		= [];
+			{
+				if (!isNull (getAssignedCuratorLogic _x)) then {
+					curatorPlayers pushBackUnique _x;
+				};
+			} forEach allPlayers;
+
+			private _humanPlayers = (allPlayers - _headlessClients) - curatorPlayers;
 			if (CURATORHUD_doDebugOutput) then { systemChat format ["We currently have %1 human players and %2 HCs.", count _humanPlayers, count _headlessClients]; };
 
 			private _allGroupsWithPlayers = [];
@@ -78,7 +85,8 @@ null=[]spawn {
 						} else {
 							// Sum up the hitStates
 							private _playerHitStates = getAllHitPointsDamage _player;
-							private _playerHitValues = _playerHitStates select 2;
+							//if (CURATORHUD_doDebugOutput) then { systemChat format ["Player is %1 (name = %2), lifeState = %3 and hit-states has %4 entries.", _player, _playerName, _lifeState, count _playerHitStates]; };
+							private _playerHitValues = if ((count _playerHitStates) > 0) then { _playerHitStates select 2 } else { [] };
 							private _playerHitSum = 0.0;
 							{
 								_playerHitSum = _playerHitSum + _x;
